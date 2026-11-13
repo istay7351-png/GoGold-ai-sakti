@@ -1,1 +1,0 @@
-# GoGold-ai-sakti

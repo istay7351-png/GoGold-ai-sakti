@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRO AI V2 - TradingView Style</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#131722;color:#fff;font-family:Arial;overflow:hidden}
+  .top{height:42px;background:#131722;border-bottom:1px solid #2a2e39;display:flex;align-items:center;padding:0 10px;gap:10px}
+  .top b{font-size:14px}.top .tf{background:#2962ff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:bold}
+  .top .right{margin-left:auto;color:#FFD700;font-weight:bold}
+  .wrap{display:flex;height:calc(100vh - 42px)}
+  .left{width:40px;background:#1e222d;border-right:1px solid #2a2e39;display:flex;flex-direction:column;align-items:center;padding-top:10px;gap:16px;font-size:18px;color:#aaa}
+  .main{flex:1;display:flex;flex-direction:column}
+  #chart{flex:1}
+  #vol{height:70px;border-top:1px solid #2a2e39}
+  #rsi{height:90px;border-top:1px solid #2a2e39}
+  .toolbar{display:flex;gap:6px;padding:6px;background:#1a1a1a}
+  .btn{background:#2a2e39;border:1px solid #444;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer}
+  .btn.active{background:#FFD700;color:#000;font-weight:bold}
+  .legend{position:absolute;top:50px;left:50px;z-index:10;background:rgba(0,0,0,0.7);padding:8px;border-radius:8px;font-size:11px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="top"><b>OANDA : XAUUSD Gold Spot</b><span class="tf">M5</span><span style="color:#aaa;font-size:12px">1D 5D 1M</span><span class="right">BRO AI V2</span></div>
+<div class="wrap">
+  <div class="left"><div>+</div><div>✏️</div><div>📏</div><div>◐</div><div>T</div><div>ƒ</div><div>⏰</div></div>
+  <div class="main">
+    <div class="toolbar">
+      <button class="btn" onclick="setSym('XAU',this)">XAUUSD</button>
+      <button class="btn" onclick="setSym('BTC',this)">BTCUSD</button>
+      <button class="btn active">M5 - TradingView Style</button>
+    </div>
+    <div style="position:relative;flex:1"><div id="chart" style="position:absolute;inset:0"></div>
+      <div class="legend">
+        <span style="color:#FFD700">— MA20 Kuning</span><br>
+        <span style="color:#2962ff">— MA50 Biru</span><br>
+        <span style="color:#fff">- - AI TENGAH Putih</span><br>
+        <span style="color:#00e676">- - LIQ BUY Ijo</span><br>
+        <span style="color:#ff5252">- - LIQ SELL Merah</span>
+      </div>
+    </div>
+    <div id="vol"></div>
+    <div id="rsi"></div>
+  </div>
+</div>
+<script>
+let SYM='XAU';
+const CFG={XAU:{ai:3918,liqB:3852.64,liqS:4000.48,base:3888},BTC:{ai:71200,liqB:70688,liqS:74092,base:70984}};
+function makeChart(el){
+  return LightweightCharts.createChart(document.getElementById(el),{layout:{background:{color:'#131722'},textColor:'#d1d4dc'},grid:{vertLines:{color:'#1e222d'},horzLines:{color:'#1e222d'}},timeScale:{timeVisible:true},height:el==='chart'?undefined:el==='vol'?70:90});
+}
+let chart=makeChart('chart'), volChart=makeChart('vol'), rsiChart=makeChart('rsi');
+let candle=chart.addCandlestickSeries({upColor:'#26a69a',downColor:'#ef5350',wickUpColor:'#26a69a',wickDownColor:'#ef5350'});
+let ma20=chart.addLineSeries({color:'#FFD700',lineWidth:1}), ma50=chart.addLineSeries({color:'#2962ff',lineWidth:1});
+let volSeries=volChart.addHistogramSeries({priceFormat:{type:'volume'}});
+let rsiSeries=rsiChart.addLineSeries({color:'#7e57c2',lineWidth:1.5});
+let lines=[];
+function draw(){
+  const c=CFG[SYM];
+  lines.forEach(l=>candle.removePriceLine(l)); lines=[];
+  lines.push(candle.createPriceLine({price:c.ai,color:'#ffffff',lineWidth:2,lineStyle:2,title:'AI 3918'}));
+  lines.push(candle.createPriceLine({price:c.liqB,color:'#00e676',lineWidth:2,lineStyle:2,title:'LIQ BUY'}));
+  lines.push(candle.createPriceLine({price:c.liqS,color:'#ff5252',lineWidth:2,lineStyle:2,title:'LIQ SELL'}));
+  let data=[], ma20D=[], ma50D=[], volD=[], rsiD=[];
+  let price=c.base-30, now=Math.floor(Date.now()/1000);
+  for(let i=80;i>=0;i--){
+    let t=now-i*300, open=price, close=open+(Math.random()-0.5)*(SYM==='XAU'?8:400);
+    let high=Math.max(open,close)+Math.random()*3, low=Math.min(open,close)-Math.random()*3;
+    data.push({time:t,open,high,low,close}); volD.push({time:t,value:Math.random()*1000,color:close>=open?'#26a69a':'#ef5350'}); price=close;
+  }
+  for(let i=0;i<data.length;i++){
+    if(i>=7){let s=0;for(let j=i-7;j<=i;j++)s+=data[j].close; ma20D.push({time:data[i].time,value:s/8});}
+    if(i>=19){let s=0;for(let j=i-19;j<=i;j++)s+=data[j].close; ma50D.push({time:data[i].time,value:s/20});}
+    rsiD.push({time:data[i].time,value:35+Math.random()*20});
+  }
+  candma20.setData(ma20D); ma50.setData(ma50D); volSeries.setData(volD); rsiSeries.setData(rsiD);
+}
+function setSym(s,el){SYM=s;document.querySelectorAll('.btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');draw();}
+draw(); setInterval(draw,60000);
+</script>
+</body>
+</html>
