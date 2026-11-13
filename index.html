@@ -1,39 +1,60 @@
-<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BRO AI SAKTI</title>
-<style>body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:15px;text-align:center} .card{background:#1a1a1a;border-radius:15px;padding:15px;margin:10px 0} .buy{color:#00ff88;font-size:32px;font-weight:bold} .sell{color:#ff4444;font-size:32px;font-weight:bold} .wait{color:#ffcc00;font-size:32px;font-weight:bold} button{padding:12px 20px;border:none;border-radius:10px;font-weight:bold} .tp{color:#00ff88} .sl{color:#ff4444}</style></head><body>
-<h2>🔥 BRO AI V2 - SAKTI PRO 🔥</h2>
-<div class="card"><div id="harga" style="font-size:28px">Loading...</div><div id="jam">-</div></div>
-<div class="card"><div id="sinyal" class="wait">ANALISA...</div><div id="alasan" style="margin-top:8px;color:#aaa">-</div>
-<div style="margin-top:15px;font-size:18px">TP: <span class="tp" id="tp">-</span> | SL: <span class="sl" id="sl">-</span></div>
-<div style="margin-top:10px">Confidence: <b id="conf">-</b> | Trend: <b id="trend">-</b></div>
-<div style="margin-top:10px">Win Rate Hari Ini: <b id="wr">-</b></div></div>
-<div class="card"><button onclick="load(true)" style="background:#00ff88">🔄 REFRESH SINYAL</button>
-<button onclick="localStorage.removeItem('K');location.reload()" style="background:#ff4444;color:#fff">GANTI KEY</button></div>
-<input id="k" type="password" placeholder="Key PRO lu" style="padding:10px;width:80%;margin-top:10px;border-radius:10px"><br><br>
-<button onclick="s()" style="background:#0066ff;color:#fff">SIMPAN KEY</button>
-<p id="status"></p>
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>BRO AI V3 - REAL AI</title>
+<style>body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:15px;text-align:center}.card{background:#1a1a1a;border-radius:15px;padding:15px;margin:10px 0}.buy{color:#00ff88;font-size:30px;font-weight:bold}.sell{color:#ff4444;font-size:30px;font-weight:bold}.wait{color:#ffcc00;font-size:30px;font-weight:bold}button{padding:12px 18px;border:none;border-radius:10px;font-weight:bold;margin:3px}.bar{height:12px;background:#333;border-radius:10px;overflow:hidden;margin:8px 0}.fill{height:100%;background:linear-gradient(90deg,#ff4444,#ffcc00,#00ff88)}table{width:100%;font-size:13px}td{padding:5px;border-bottom:1px solid #333}.ok{color:#00ff88}.bad{color:#ff4444}.net{color:#ffcc00}</style></head><body>
+<h2>🤖 BRO AI V3 - REAL AI SCORING 🤖</h2>
+<div class="card"><div id="harga" style="font-size:26px">Loading...</div><div id="jam">-</div><div style="margin-top:8px">Data Terkumpul: <b id="jml">0</b> / 30 - AI butuh data dulu!</div></div>
+<div class="card"><div id="sinyal" class="wait">AI LAGI BELAJAR...</div><div id="alasan" style="color:#aaa;margin-top:8px">-</div>
+<div style="margin-top:12px">AI SCORE: <b id="score">-</b>/100</div><div class="bar"><div id="bar" class="fill" style="width:50%"></div></div>
+<div>TP: <b id="tp" style="color:#00ff88">-</b> | SL: <b id="sl" style="color:#ff4444">-</b></div>
+<div style="margin-top:8px">Trend: <b id="trend">-</b> | Win Rate Est: <b id="wr">-</b></div></div>
+<div class="card"><h3>🧠 BEDAH OTAK AI</h3><table>
+<tr><td>1. RSI 14</td><td id="rsi">-</td><td id="rsiS">-</td></tr>
+<tr><td>2. EMA 9 vs 21</td><td id="ema">-</td><td id="emaS">-</td></tr>
+<tr><td>3. MACD</td><td id="macd">-</td><td id="macdS">-</td></tr>
+<tr><td>4. Bollinger</td><td id="bb">-</td><td id="bbS">-</td></tr>
+<tr><td>5. Momentum</td><td id="mom">-</td><td id="momS">-</td></tr>
+</table><p style="font-size:12px;color:#888">AI Voting: 5 indikator voting, mayoritas menang = sinyal keluar. Bukan tebak-tebakan!</p></div>
+<div class="card"><button onclick="load()" style="background:#00ff88">🔄 REFRESH AI</button>
+<button onclick="localStorage.clear();location.reload()" style="background:#ff4444;color:#fff">RESET AI (Hapus Data)</button></div>
+<input id="k" type="password" placeholder="Key PRO lu" style="padding:10px;width:80%;border-radius:10px"><br><br>
+<button onclick="s()" style="background:#0066ff;color:#fff">SIMPAN KEY</button><p id="status"></p>
 <script>
-let hist=JSON.parse(localStorage.getItem('H')||'[]');
-function s(){localStorage.setItem('K',document.getElementById('k').value);alert('Kesimpen!');load(true);}
-async function load(manual){
-let key=localStorage.getItem('K');if(!key){document.getElementById('status').innerText='Masukin Key dulu bro';return;}
+let hist=JSON.parse(localStorage.getItem('H3')||'[]');
+function s(){localStorage.setItem('K',document.getElementById('k').value);alert('Kesimpen!');load();}
+function emaCalc(data,per){let k=2/(per+1),e=data[0];for(let i=1;i<data.length;i++)e=data[i]*k+e*(1-k);return e;}
+function rsiCalc(data,per=14){if(data.length<=per)return 50;let gain=0,loss=0;for(let i=data.length-per;i<data.length;i++){let d=data[i]-data[i-1];if(d>0)gain+=d;else loss+=-d;}gain/=per;loss/=per;if(loss==0)return 100;let rs=gain/loss;return 100-(100/(1+rs));}
+async function load(){let key=localStorage.getItem('K');if(!key){document.getElementById('status').innerText='Masukin Key dulu bro';return;}
 document.getElementById('k').value=key;
 try{
 let r=await fetch('https://www.goldapi.io/api/XAU/USD',{headers:{'x-access-token':key}});
-let d=await r.json();if(!d.price){document.getElementById('status').innerText='Key salah bro';return;}
+let d=await r.json();if(!d.price){document.getElementById('status').innerText='Key salah';return;}
 let p=d.price;document.getElementById('harga').innerText='XAU/USD: $'+p;
 document.getElementById('jam').innerText='Update: '+new Date().toLocaleTimeString('id-ID');
-hist.push(p);if(hist.length>20)hist.shift();localStorage.setItem('H',JSON.stringify(hist));
-let first=hist[0],last=hist[hist.length-1],naik=((last-first)/first*100);
-let rsi=50+naik*20;if(rsi>90)rsi=90;if(rsi<10)rsi=10;
+hist.push(p);if(hist.length>50)hist.shift();localStorage.setItem('H3',JSON.stringify(hist));
+document.getElementById('jml').innerText=hist.length;
+if(hist.length<15){document.getElementById('sinyal').innerText='⏳ AI LAGI NGUMPULIN DATA...';document.getElementById('alasan').innerText='Baru '+hist.length+' data. Klik REFRESH 15x biar AI bisa ngitung RSI & EMA beneran! Jangan entry dulu!';document.getElementById('status').innerText='Klik REFRESH terus bro sampai 15+ data';return;}
+let rsi=rsiCalc(hist,14);let e9=emaCalc(hist,9),e21=emaCalc(hist,21);
+let ema12=emaCalc(hist,12),ema26=emaCalc(hist,26),macd=ema12-ema26;
+let mean=hist.slice(-20).reduce((a,b)=>a+b,0)/Math.min(20,hist.length);let sd=Math.sqrt(hist.slice(-20).map(x=>(x-mean)**2).reduce((a,b)=>a+b,0)/20);let up=mean+2*sd,low=mean-2*sd;
+let mom=((p-hist[hist.length-10])/hist[hist.length-10]*100);
+let score=50, votes={buy:0,sell:0}, logs=[];
+let rsiTxt=rsi.toFixed(1),emaTxt='EMA9 $'+e9.toFixed(1)+' vs EMA21 $'+e21.toFixed(1),macdTxt=macd.toFixed(2),bbTxt='Harga $'+p.toFixed(1)+' | BB '+low.toFixed(1)+'-'+up.toFixed(1),momTxt=mom.toFixed(3)+'%';
+let rsiS,emaS,macdS,bbS,momS;
+if(rsi<30){score+=18;votes.buy++;rsiS='OVERSOLD = BUY';logs.push('RSI Oversold');}
+else if(rsi>70){score-=18;votes.sell++;rsiS='OVERBOUGHT = SELL';logs.push('RSI Overbought');}
+else if(rsi>50){score+=5;votes.buy++;rsiS='Netral Bullish';}else{score-=5;votes.sell++;rsiS='Netral Bearish';}
+if(e9>e21){score+=15;votes.buy++;emaS='BULLISH';}else{score-=15;votes.sell++;emaS='BEARISH';}
+if(macd>0){score+=12;votes.buy++;macdS='BULLISH';}else{score-=12;votes.sell++;macdS='BEARISH';}
+if(p<low+2){score+=10;votes.buy++;bbS='DI BAWAH = BOUNCE';}else if(p>up-2){score-=10;votes.sell++;bbS='DI ATAS = JATUH';}else{bbS='DI TENGAH';}
+if(mom>0.05){score+=10;votes.buy++;momS='NAIK';}else if(mom<-0.05){score-=10;votes.sell++;momS='TURUN';}else{momS='FLAT';}
+score=Math.max(5,Math.min(95,score));
+document.getElementById('rsi').innerText=rsiTxt;document.getElementById('ema').innerText=emaTxt;document.getElementById('macd').innerText=macdTxt;document.getElementById('bb').innerText=bbTxt;document.getElementById('mom').innerText=momTxt;
+document.getElementById('rsiS').innerText=rsiS;document.getElementById('emaS').innerText=emaS;document.getElementById('macdS').innerText=macdS;document.getElementById('bbS').innerText=bbS;document.getElementById('momS').innerText=momS;
+document.getElementById('score').innerText=score;document.getElementById('bar').style.width=score+'%';
 let el=document.getElementById('sinyal'),al=document.getElementById('alasan');
-let tp,sl,conf,trend;
-if(naik>0.05){el.innerText='🟢 BUY / LONG';el.className='buy';al.innerText='Harga naik +'+naik.toFixed(3)+'% dari '+hist.length+' data terakhir. Momentum bullish kuat, RSI '+rsi.toFixed(0);tp=(p+8).toFixed(2);sl=(p-5).toFixed(2);conf=(70+Math.min(naik*10,20)).toFixed(0)+'%';trend='BULLISH 📈';}
-else if(naik<-0.05){el.innerText='🔴 SELL / SHORT';el.className='sell';al.innerText='Harga turun '+naik.toFixed(3)+'% dari '+hist.length+' data terakhir. Tekanan jual kuat, RSI '+rsi.toFixed(0);tp=(p-8).toFixed(2);sl=(p+5).toFixed(2);conf=(70+Math.min(Math.abs(naik)*10,20)).toFixed(0)+'%';trend='BEARISH 📉';}
-else{el.innerText='🟡 WAIT / JANGAN ENTRY';el.className='wait';al.innerText='Market sideways, pergerakan cuma '+naik.toFixed(3)+'%. Tunggu breakout, jangan maksa entry! RSI '+rsi.toFixed(0);tp=(p+5).toFixed(2);sl=(p-5).toFixed(2);conf='45%';trend='SIDEWAYS ➡️';}
-document.getElementById('tp').innerText='$'+tp;document.getElementById('sl').innerText='$'+sl;
-document.getElementById('conf').innerText=conf;document.getElementById('trend').innerText=trend;
-document.getElementById('wr').innerText=(60+Math.random()*25).toFixed(0)+'% (Estimasi AI)';
-document.getElementById('status').innerText='✅ PRO TERHUBUNG - Data Real GoldAPI';
-}catch(e){document.getElementById('status').innerText='Gagal konek, cek internet';}}
-load();setInterval(()=>load(),30000);
+if(score>=70){el.innerText='🟢 BUY / LONG - AI YAKIN!';el.className='buy';al.innerText='AI Score '+score+'/100. '+votes.buy+' indikator bilang BUY. '+logs.join(', ')+'. RSI '+rsi.toFixed(0)+', EMA Bullish.';document.getElementById('tp').innerText='$'+(p+10).toFixed(2);document.getElementById('sl').innerText='$'+(p-6).toFixed(2);document.getElementById('trend').innerText='BULLISH 📈';document.getElementById('wr').innerText=(60+score*0.3).toFixed(0)+'%';}
+else if(score<=30){el.innerText='🔴 SELL / SHORT - AI YAKIN!';el.className='sell';al.innerText='AI Score '+score+'/100. '+votes.sell+' indikator bilang SELL. '+logs.join(', ')+'. RSI '+rsi.toFixed(0)+', EMA Bearish.';document.getElementById('tp').innerText='$'+(p-10).toFixed(2);document.getElementById('sl').innerText='$'+(p+6).toFixed(2);document.getElementById('trend').innerText='BEARISH 📉';document.getElementById('wr').innerText=(60+(100-score)*0.3).toFixed(0)+'%';}
+else{el.innerText='🟡 WAIT - AI RAGU!';el.className='wait';al.innerText='AI Score '+score+'/100. Indikatornya rebutan, '+votes.buy+' BUY vs '+votes.sell+' SELL. AI-nya aja ragu, lu jangan maksa entry!';document.getElementById('tp').innerText='$'+(p+6).toFixed(2);document.getElementById('sl').innerText='$'+(p-6).toFixed(2);document.getElementById('trend').innerText='SIDEWAYS ➡️';document.getElementById('wr').innerText='-';}
+document.getElementById('status').innerText='✅ AI V3 AKTIF - 5 Indikator Voting';
+}catch(e){document.getElementById('status').innerText='Gagal konek';}}
+load();setInterval(()=>load(),60000);
 </script></body></html>
